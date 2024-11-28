@@ -16,11 +16,11 @@ type MovieDetailsProps = {
 };
 
 export const MovieDetails: React.FC<MovieDetailsProps> = ({ route }) => {
-  const { movieId, media_type } = route.params; // Отримуємо movieId та media_type з параметрів
+  const { movieId, media_type } = route.params;
   const [movie, setMovie] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [isLiked, setIsLiked] = useState<boolean>(false); // Стан лайку
+  const [isLiked, setIsLiked] = useState<boolean>(false);
 
   const fetchDetails = async () => {
     try {
