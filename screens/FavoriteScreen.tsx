@@ -53,7 +53,7 @@ export const FavoriteScreen: React.FC = () => {
     if (media_type === "movie") {
       navigation.navigate("MovieDetails", { movieId, media_type });
     } else if (media_type === "tv") {
-      navigation.navigate("TVShowDetails", { movieId, media_type });
+      navigation.navigate("TVShowDetails", { movieId, media_type: "tv" });
     } else {
       console.error("Invalid media_type:", media_type);
     }

@@ -50,7 +50,7 @@ const SortingOptions: React.FC<SortingOptionsProps> = ({ onSortChange }) => {
   );
 };
 
-// Допоміжна функція для форматування тексту
+//  функція для форматування тексту
 const capitalize = (text: string) =>
   text
     .split("_")

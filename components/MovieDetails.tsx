@@ -68,6 +68,7 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({ route }) => {
           id: movie.id,
           title: movie.title || movie.name,
           poster_path: movie.poster_path,
+          media_type,
         });
         await AsyncStorage.setItem("favorites", JSON.stringify(favorites));
         Alert.alert("Added to Favorites");

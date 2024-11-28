@@ -1,11 +1,13 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
+// описує обєкт елем
 type FavoriteItem = {
   id: number;
   title: string;
   posterPath: string;
 };
 
+//структура контексту
 type FavoriteContextType = {
   favorites: FavoriteItem[];
   addFavorite: (item: FavoriteItem) => void;
