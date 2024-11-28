@@ -1,6 +1,10 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "jsx": "react-native", // Додаємо налаштування для JSX у React Native
+    "esModuleInterop": true, // Для сумісності з ES модулями
+    "skipLibCheck": true, // Пропуск перевірки типів у бібліотеках для прискорення
+    "forceConsistentCasingInFileNames": true // Забороняє різницю у регістрі імен файлів
   }
 }
