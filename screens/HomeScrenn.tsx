@@ -72,9 +72,20 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
   };
 
   const handleMoviePress = (movieId: number, media_type: string) => {
-    navigation.navigate("MovieDetails", { movieId, media_type });
-  };
+    console.log(
+      `Navigating to ${
+        media_type === "movie" ? "MovieDetails" : "TVShowDetails"
+      } with movieId: ${movieId} and media_type: ${media_type}`
+    );
 
+    if (media_type === "movie") {
+      navigation.navigate("MovieDetails", { movieId, media_type });
+    } else if (media_type === "tv") {
+      navigation.navigate("TVShowDetails", { movieId, media_type });
+    } else {
+      console.error("Invalid media_type:", media_type);
+    }
+  };
   //Повернення на welcomeScreen
   const handleBackToWelcome = () => {
     navigation.navigate("Welcome");
