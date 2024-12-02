@@ -11,6 +11,40 @@ type SortingOptionsProps = {
   onSortChange: (sortOption: SortOptions) => void;
 };
 
+// сортування
+export const sortItems = (
+  data: any[],
+  sortOption: SortOptions,
+  type: string
+) => {
+  let sortedItems = [...data];
+
+  switch (sortOption) {
+    case "release_date":
+      sortedItems = sortedItems.sort((a, b) => {
+        const dateA = type === "movie" ? a.release_date : a.first_air_date;
+        const dateB = type === "movie" ? b.release_date : b.first_air_date;
+        return dateA > dateB ? 1 : -1;
+      });
+      break;
+    case "rating":
+      sortedItems = sortedItems.sort((a, b) => b.vote_average - a.vote_average);
+      break;
+    case "popularity":
+      sortedItems = sortedItems.sort((a, b) => b.popularity - a.popularity);
+      break;
+    case "alphabetical":
+      sortedItems = sortedItems.sort((a, b) =>
+        (a.title || a.name).localeCompare(b.title || b.name)
+      );
+      break;
+    default:
+      break;
+  }
+
+  return sortedItems;
+};
+
 const SortingOptions: React.FC<SortingOptionsProps> = ({ onSortChange }) => {
   const [selectedSort, setSelectedSort] = useState<SortOptions>("popularity");
 

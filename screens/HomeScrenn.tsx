@@ -9,8 +9,10 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { TabParamList } from "../types";
-import { API_KEY } from "../services/tmbdAPI";
+import { TabParamList } from "../services/types";
+import { tmbdApi } from "../services/tmbdAPI";
+import { sortItems, SortOptions } from "./WelcomeScreen/SortingOptions";
+import { getImageUrl } from "../services/tmbdAPI";
 
 type HomeScreenProps = BottomTabScreenProps<TabParamList, "Home">;
 
@@ -23,17 +25,10 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
     const fetchItems = async () => {
       setLoading(true);
 
-      const genreParam =
-        genre && genre !== "All Genres" ? `&with_genres=${genre}` : "";
-      const url = `https://api.themoviedb.org/3/discover/${type}?api_key=${API_KEY}${genreParam}`;
-
       try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Failed to fetch data");
-        }
-
-        const data = await response.json();
+        let data;
+        // Викликаємо відповідну функцію API в залежності від type і genre
+        data = await tmbdApi.getMoviesByTypeAndGenre(type, genre);
 
         if (data.results && data.results.length > 0) {
           setItems(data.results);
@@ -47,29 +42,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
 
     fetchItems();
   }, [type, genre]);
-
-  // Функція для сортування фільмів
-  const sortItems = (data: any[]) => {
-    let sortedItems = [...data];
-    switch (sort) {
-      case "release_date":
-        sortedItems = sortedItems.sort((a, b) =>
-          a.release_date > b.release_date ? 1 : -1
-        );
-        break;
-      case "rating":
-        sortedItems = sortedItems.sort(
-          (a, b) => b.vote_average - a.vote_average
-        );
-        break;
-      case "popularity":
-        sortedItems = sortedItems.sort((a, b) => b.popularity - a.popularity);
-        break;
-      default:
-        break;
-    }
-    return sortedItems;
-  };
 
   const handleMoviePress = (movieId: number, media_type: string) => {
     console.log(
@@ -86,6 +58,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
       console.error("Invalid media_type:", media_type);
     }
   };
+
   //Повернення на welcomeScreen
   const handleBackToWelcome = () => {
     navigation.navigate("Welcome");
@@ -108,7 +81,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
   }
 
   // Сортуємо фільмів до опцій
-  const sortedItems = sortItems(items);
+  const sortedItems = sortItems(items, sort as SortOptions, type);
 
   return (
     <View style={styles.container}>
@@ -125,7 +98,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
           >
             <Image
               source={{
-                uri: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
+                uri: getImageUrl(item.poster_path, "w500"),
               }}
               style={styles.poster}
             />

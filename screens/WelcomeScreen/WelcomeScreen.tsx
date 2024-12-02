@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
-import SortingOptions, { SortOptions } from "../Sort/SortingOptions";
+// import SortingOptions, { SortOptions } from "./SortingOptions";
+import SortingOptions, { SortOptions } from "./SortingOptions";
 
 type WelcomeScreenProps = {
   navigation: StackNavigationProp<any, any>;
@@ -21,7 +22,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
     { id: "878", name: "Sci-Fi" },
   ];
 
-  // 
+  //
   const handleStart = () => {
     navigation.navigate("MainTabs", {
       screen: "Home",

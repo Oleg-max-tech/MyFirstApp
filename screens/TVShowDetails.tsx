@@ -9,13 +9,15 @@ import {
   Alert,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { API_KEY } from "../services/tmbdAPI";
+import { tmbdApi } from "../services/tmbdAPI";
+import { getImageUrl } from "../services/tmbdAPI";
+import { ScrollView } from "react-native-gesture-handler";
 
-type MovieDetailsProps = {
+type TVShowDetailsProps = {
   route: any;
 };
 
-export const MovieDetails: React.FC<MovieDetailsProps> = ({ route }) => {
+export const TVShowDetails: React.FC<TVShowDetailsProps> = ({ route }) => {
   const { movieId, media_type } = route.params;
   const [movie, setMovie] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
@@ -24,18 +26,10 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({ route }) => {
 
   const fetchDetails = async () => {
     try {
-      const response = await fetch(
-        `https://api.themoviedb.org/3/${media_type}/${movieId}?api_key=${API_KEY}&language=en-US`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch details");
-      }
-
-      const data = await response.json();
+      const data = await tmbdApi.getMovieDetails(movieId, media_type);
       setMovie(data);
 
-      // Перевіряємо, чи елемент вже лайкнутий
+      // Перевірка, чи елемент вже лайкнутий
       const storedFavorites = await AsyncStorage.getItem("favorites");
       const favorites = storedFavorites ? JSON.parse(storedFavorites) : [];
       setIsLiked(favorites.some((item: any) => item.id === data.id));
@@ -101,20 +95,17 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({ route }) => {
     );
   }
 
-  const renderStars = (rating: number) => {
-    const filledStars = Math.round(rating); // Кількість заповнених зірок
-    const emptyStars = 10 - filledStars; // Кількість порожніх зірок
-    const filled = Array(filledStars).fill("★");
-    const empty = Array(emptyStars).fill("☆");
-    return [...filled, ...empty].join(""); // Об'єднуємо зірки
+  const renderRating = (rating: number) => {
+    const roundedRating = Math.floor(rating);
+    return `${roundedRating}/10`;
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {movie.poster_path && (
         <Image
           source={{
-            uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+            uri: getImageUrl(movie.poster_path),
           }}
           style={styles.poster}
         />
@@ -127,7 +118,7 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({ route }) => {
       </Text>
 
       <Text style={styles.subTitle}>
-        Rating: {renderStars(movie.vote_average)}
+        Rating: {renderRating(movie.vote_average)}
       </Text>
 
       <Text style={styles.subTitle}>
@@ -138,7 +129,7 @@ export const MovieDetails: React.FC<MovieDetailsProps> = ({ route }) => {
         title={isLiked ? "Remove from Favorites" : "Add to Favorites"}
         onPress={handleLike}
       />
-    </View>
+    </ScrollView>
   );
 };
 

@@ -7,55 +7,40 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { TabParamList } from "../types";
+import { TabParamList } from "../services/types";
 
-//тип для навігації
+import { useFavorite } from "../context/FavoriteContent";
+import { getImageUrl } from "../services/tmbdAPI";
+
+// тип для навігації
 type FavoriteScreenNavigationProp = StackNavigationProp<
   TabParamList,
   "Favorites"
 >;
 
 export const FavoriteScreen: React.FC = () => {
-  const [favorites, setFavorites] = useState<any[]>([]);
+  const { favorites, addFavorite, removeFavorite } = useFavorite();
+  const [localFavorites, setLocalFavorites] = useState<any[]>([]);
   const navigation = useNavigation<FavoriteScreenNavigationProp>();
 
-  // Завантаження улюблених фільмів і серіалів
-  const loadFavorites = async () => {
-    try {
-      const storedFavorites = await AsyncStorage.getItem("favorites");
-      const favorites = storedFavorites ? JSON.parse(storedFavorites) : [];
-      setFavorites(favorites);
-    } catch (error) {
-      console.error("Error loading favorites:", error);
-    }
-  };
-
   useEffect(() => {
-    loadFavorites();
-  }, []);
+    setLocalFavorites(favorites);
+  }, [favorites]);
 
   // Видалення з улюблених
-  const handleRemoveFavorite = async (id: number) => {
-    try {
-      const updatedFavorites = favorites.filter((item) => item.id !== id);
-      setFavorites(updatedFavorites);
-      await AsyncStorage.setItem("favorites", JSON.stringify(updatedFavorites));
-    } catch (error) {
-      console.error("Error removing favorite:", error);
-    }
+  const handleRemoveFavorite = (id: number) => {
+    removeFavorite(id);
+  };
+
+  // Додавання до улюблених
+  const handleAddFavorite = (item: any) => {
+    addFavorite(item); // Додаємо до контексту
   };
 
   // Перехід до деталей фільму або серіалу
   const handleMoviePress = (movieId: number, media_type: string) => {
-    console.log(
-      `Navigating to ${
-        media_type === "movie" ? "MovieDetails" : "TVShowDetails"
-      } with movieId: ${movieId} and media_type: ${media_type}`
-    );
-
     if (media_type === "movie") {
       navigation.navigate("MovieDetails", { movieId, media_type });
     } else if (media_type === "tv") {
@@ -74,11 +59,11 @@ export const FavoriteScreen: React.FC = () => {
         <Text style={styles.backButtonText}>Back to Main Menu</Text>
       </TouchableOpacity>
 
-      {favorites.length === 0 ? (
+      {localFavorites.length === 0 ? (
         <Text style={styles.emptyText}>No favorites yet</Text>
       ) : (
         <FlatList
-          data={favorites}
+          data={localFavorites}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => (
             <TouchableOpacity
@@ -90,7 +75,7 @@ export const FavoriteScreen: React.FC = () => {
               {item.poster_path && (
                 <Image
                   source={{
-                    uri: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
+                    uri: getImageUrl(item.poster_path, "w500"),
                   }}
                   style={styles.poster}
                 />
@@ -102,7 +87,10 @@ export const FavoriteScreen: React.FC = () => {
                 style={styles.removeButton}
                 onPress={() => handleRemoveFavorite(item.id)}
               >
-                <Text style={styles.removeButtonText}>⭐</Text>
+                <Image
+                  source={require("../assets/delete-icon.png")}
+                  style={styles.removeButton}
+                />
               </TouchableOpacity>
             </TouchableOpacity>
           )}
@@ -148,28 +136,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     flex: 1,
   },
-  releaseDate: {
-    fontSize: 14,
-    color: "#666",
-  },
-  mediaType: {
-    fontSize: 12,
-    color: "#999",
-    marginTop: 5,
-  },
   removeButton: {
     padding: 5,
-    backgroundColor: "#FF6347",
     borderRadius: 50,
     marginLeft: 10,
     justifyContent: "center",
     alignItems: "center",
-    height: 30,
-    width: 30,
-  },
-  removeButtonText: {
-    fontSize: 18,
-    color: "#fff",
+    height: 40,
+    width: 40,
   },
   backButton: {
     padding: 10,

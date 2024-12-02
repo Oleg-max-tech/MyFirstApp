@@ -1,13 +1,21 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // описує обєкт елем
 type FavoriteItem = {
   id: number;
   title: string;
   posterPath: string;
+  media_type: string;
 };
 
-//структура контексту
+// структура контексту
 type FavoriteContextType = {
   favorites: FavoriteItem[];
   addFavorite: (item: FavoriteItem) => void;
@@ -23,16 +31,54 @@ export const FavoriteProvider: React.FC<{ children: ReactNode }> = ({
 }) => {
   const [favorites, setFavorites] = useState<FavoriteItem[]>([]);
 
-  const addFavorite = (item: FavoriteItem) => {
+  // Завантаження улюблених з AsyncStorage
+  const loadFavorites = async () => {
+    try {
+      const storedFavorites = await AsyncStorage.getItem("favorites");
+      console.log("Loaded favorites:", storedFavorites);
+      const parsedFavorites = storedFavorites
+        ? JSON.parse(storedFavorites)
+        : [];
+      setFavorites(parsedFavorites);
+    } catch (error) {
+      console.error("Error loading favorites:", error);
+    }
+  };
+
+  const saveFavorites = async (newFavorites: FavoriteItem[]) => {
+    try {
+      console.log("Saving favorites:", newFavorites);
+      await AsyncStorage.setItem("favorites", JSON.stringify(newFavorites));
+    } catch (error) {
+      console.error("Error saving favorites:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadFavorites();
+  }, []);
+
+  useEffect(() => {
+    if (favorites.length > 0) {
+      saveFavorites(favorites);
+    }
+  }, [favorites]);
+
+  const addFavorite = async (item: FavoriteItem) => {
     setFavorites((prev) => {
-      // Уникання дублювання елементів
       if (prev.some((fav) => fav.id === item.id)) return prev;
-      return [...prev, item];
+      const updatedFavorites = [...prev, item];
+      saveFavorites(updatedFavorites); // Зберігаємо в AsyncStorage
+      return updatedFavorites;
     });
   };
 
-  const removeFavorite = (id: number) => {
-    setFavorites((prev) => prev.filter((item) => item.id !== id));
+  const removeFavorite = async (id: number) => {
+    setFavorites((prev) => {
+      const updatedFavorites = prev.filter((item) => item.id !== id);
+      saveFavorites(updatedFavorites); // Зберігаємо в AsyncStorage
+      return updatedFavorites;
+    });
   };
 
   return (
