@@ -11,7 +11,7 @@ import {
 import { tmbdApi } from "../services/tmbdAPI";
 import { getImageUrl } from "../services/tmbdAPI";
 import { ScrollView } from "react-native-gesture-handler";
-import { useFavorite } from "../context/FavoriteContent"; // Імпортуємо контекст
+import { useFavorite } from "../context/FavoriteContent";
 
 type TVShowDetailsProps = {
   route: any;
@@ -31,11 +31,10 @@ export const TVShowDetails: React.FC<TVShowDetailsProps> = ({ route }) => {
     try {
       const data = await tmbdApi.getMovieDetails(movieId, media_type);
 
-      console.log("Fetched movie data:", data); // Логування для перевірки отриманих даних
+      console.log("Fetched movie data:", data);
 
       setMovie(data);
 
-      // Перевіряємо, чи фільм або серіал вже є у списку улюблених через контекст
       setIsLiked(
         favorites.some(
           (item: any) => item.id === data.id && item.media_type === media_type
