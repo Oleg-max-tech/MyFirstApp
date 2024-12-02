@@ -8,10 +8,10 @@ import {
   Button,
   Alert,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import { tmbdApi } from "../services/tmbdAPI";
 import { getImageUrl } from "../services/tmbdAPI";
 import { ScrollView } from "react-native-gesture-handler";
+import { useFavorite } from "../context/FavoriteContent"; // Імпортуємо контекст
 
 type TVShowDetailsProps = {
   route: any;
@@ -22,17 +22,26 @@ export const TVShowDetails: React.FC<TVShowDetailsProps> = ({ route }) => {
   const [movie, setMovie] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+
+  const { favorites, toggleFavorite } = useFavorite(); // Використовуємо контекст
+
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
   const fetchDetails = async () => {
     try {
       const data = await tmbdApi.getMovieDetails(movieId, media_type);
+
+      console.log("Fetched movie data:", data); // Логування для перевірки отриманих даних
+
       setMovie(data);
 
-      // Перевірка, чи елемент вже лайкнутий
-      const storedFavorites = await AsyncStorage.getItem("favorites");
-      const favorites = storedFavorites ? JSON.parse(storedFavorites) : [];
-      setIsLiked(favorites.some((item: any) => item.id === data.id));
+      // Перевіряємо, чи фільм або серіал вже є у списку улюблених через контекст
+      setIsLiked(
+        favorites.some(
+          (item: any) => item.id === data.id && item.media_type === media_type
+        )
+      );
+
       setIsLoading(false);
     } catch (error) {
       console.error("Error fetching details:", error);
@@ -41,33 +50,11 @@ export const TVShowDetails: React.FC<TVShowDetailsProps> = ({ route }) => {
     }
   };
 
-  const handleLike = async () => {
+  const handleLike = () => {
     try {
-      const storedFavorites = await AsyncStorage.getItem("favorites");
-      const favorites = storedFavorites ? JSON.parse(storedFavorites) : [];
-
-      if (isLiked) {
-        // Видаляємо з лайків
-        const updatedFavorites = favorites.filter(
-          (item: any) => item.id !== movie.id
-        );
-        await AsyncStorage.setItem(
-          "favorites",
-          JSON.stringify(updatedFavorites)
-        );
-        Alert.alert("Removed from Favorites");
-      } else {
-        // Додаємо в лайки
-        favorites.push({
-          id: movie.id,
-          title: movie.title || movie.name,
-          poster_path: movie.poster_path,
-          media_type,
-        });
-        await AsyncStorage.setItem("favorites", JSON.stringify(favorites));
-        Alert.alert("Added to Favorites");
-      }
-      setIsLiked(!isLiked);
+      toggleFavorite(movie); // Викликаємо toggleFavorite з контексту
+      setIsLiked(!isLiked); // Оновлюємо статус лайка
+      Alert.alert(isLiked ? "Removed from Favorites" : "Added to Favorites");
     } catch (error) {
       console.error("Error handling like:", error);
     }
@@ -96,35 +83,34 @@ export const TVShowDetails: React.FC<TVShowDetailsProps> = ({ route }) => {
   }
 
   const renderRating = (rating: number) => {
-    const roundedRating = Math.floor(rating);
-    return `${roundedRating}/10`;
+    const roundedRating = Math.floor(rating); // Округляємо рейтинг до найближчого цілого вниз
+    return `${roundedRating}/10`; // Форматуємо як "9/10"
   };
 
   return (
     <ScrollView style={styles.container}>
-      {movie.poster_path && (
+      {movie.poster_path ? (
         <Image
           source={{
             uri: getImageUrl(movie.poster_path),
           }}
           style={styles.poster}
         />
+      ) : (
+        <Text>No poster available</Text>
       )}
-
-      <Text style={styles.title}>{movie.title || movie.name}</Text>
-
+      <Text style={styles.title}>
+        {movie.name || movie.title || "No title available"}
+      </Text>
       <Text style={styles.overview}>
         {movie.overview || "No description available."}
       </Text>
-
       <Text style={styles.subTitle}>
         Rating: {renderRating(movie.vote_average)}
       </Text>
-
       <Text style={styles.subTitle}>
         Release Date: {movie.release_date || movie.first_air_date || "N/A"}
       </Text>
-
       <Button
         title={isLiked ? "Remove from Favorites" : "Add to Favorites"}
         onPress={handleLike}

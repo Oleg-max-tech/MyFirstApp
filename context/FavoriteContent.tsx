@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-// описує обєкт елем
+// Описуємо тип елемента улюбленого
 type FavoriteItem = {
   id: number;
   title: string;
@@ -15,11 +15,12 @@ type FavoriteItem = {
   media_type: string;
 };
 
-// структура контексту
+// Структура контексту
 type FavoriteContextType = {
   favorites: FavoriteItem[];
   addFavorite: (item: FavoriteItem) => void;
   removeFavorite: (id: number) => void;
+  toggleFavorite: (item: FavoriteItem) => void; // Додаємо toggleFavorite
 };
 
 const FavoriteContext = createContext<FavoriteContextType | undefined>(
@@ -35,19 +36,17 @@ export const FavoriteProvider: React.FC<{ children: ReactNode }> = ({
   const loadFavorites = async () => {
     try {
       const storedFavorites = await AsyncStorage.getItem("favorites");
-      console.log("Loaded favorites:", storedFavorites);
-      const parsedFavorites = storedFavorites
-        ? JSON.parse(storedFavorites)
-        : [];
-      setFavorites(parsedFavorites);
+      if (storedFavorites) {
+        setFavorites(JSON.parse(storedFavorites));
+      }
     } catch (error) {
       console.error("Error loading favorites:", error);
     }
   };
 
+  // Збереження улюблених в AsyncStorage
   const saveFavorites = async (newFavorites: FavoriteItem[]) => {
     try {
-      console.log("Saving favorites:", newFavorites);
       await AsyncStorage.setItem("favorites", JSON.stringify(newFavorites));
     } catch (error) {
       console.error("Error saving favorites:", error);
@@ -58,32 +57,58 @@ export const FavoriteProvider: React.FC<{ children: ReactNode }> = ({
     loadFavorites();
   }, []);
 
+  // Оновлення AsyncStorage при зміні списку улюблених
   useEffect(() => {
-    if (favorites.length > 0) {
-      saveFavorites(favorites);
-    }
+    const updateFavorites = async () => {
+      if (favorites.length > 0) {
+        await saveFavorites(favorites);
+      }
+    };
+    updateFavorites();
   }, [favorites]);
 
-  const addFavorite = async (item: FavoriteItem) => {
+  // Додавання нового улюбленого
+  const addFavorite = (item: FavoriteItem) => {
     setFavorites((prev) => {
-      if (prev.some((fav) => fav.id === item.id)) return prev;
-      const updatedFavorites = [...prev, item];
-      saveFavorites(updatedFavorites); // Зберігаємо в AsyncStorage
+      const updatedFavorites = prev.some((fav) => fav.id === item.id)
+        ? prev
+        : [...prev, item];
+
       return updatedFavorites;
     });
   };
 
-  const removeFavorite = async (id: number) => {
+  // Видалення улюбленого
+  const removeFavorite = (id: number) => {
     setFavorites((prev) => {
       const updatedFavorites = prev.filter((item) => item.id !== id);
-      saveFavorites(updatedFavorites); // Зберігаємо в AsyncStorage
       return updatedFavorites;
+    });
+  };
+
+  // Функція для додавання або видалення елемента з улюблених
+  const toggleFavorite = (item: FavoriteItem) => {
+    setFavorites((prev) => {
+      // Перевіряємо, чи вже є елемент у списку улюблених
+      const isFavorite = prev.some(
+        (fav) => fav.id === item.id && fav.media_type === item.media_type
+      );
+
+      if (isFavorite) {
+        // Якщо вже є, видаляємо його
+        return prev.filter(
+          (fav) => fav.id !== item.id || fav.media_type !== item.media_type
+        );
+      } else {
+        // Якщо немає, додаємо в список улюблених
+        return [...prev, item];
+      }
     });
   };
 
   return (
     <FavoriteContext.Provider
-      value={{ favorites, addFavorite, removeFavorite }}
+      value={{ favorites, addFavorite, removeFavorite, toggleFavorite }}
     >
       {children}
     </FavoriteContext.Provider>
