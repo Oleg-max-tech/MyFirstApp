@@ -16,8 +16,8 @@ import { RouteProp } from "@react-navigation/native";
 import { StackParamList } from "../services/types";
 
 type ProductDetailsProps = {
-  route: RouteProp<StackParamList, "ProductDetails">; // Типізуємо параметри для ProductDetails
-  navigation: StackNavigationProp<StackParamList, "ProductDetails">; // Типізуємо навігацію
+  route: RouteProp<StackParamList, "ProductDetails">;
+  navigation: StackNavigationProp<StackParamList, "ProductDetails">;
 };
 
 export const ProductDetails: React.FC<ProductDetailsProps> = ({ route }) => {

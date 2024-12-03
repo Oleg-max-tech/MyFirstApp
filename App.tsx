@@ -5,11 +5,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import WelcomeScreen from "./screens/WelcomeScreen/WelcomeScreen";
 import { FavoriteScreen } from "./screens/FavoriteScreen";
 import HomeScreenn from "./screens/HomeScrenn";
-// import { MovieDetails } from "./screens/MovieDetails";
 import { TabParamList } from "./services/types";
-
 import { FavoriteProvider, useFavorite } from "./context/FavoriteContent";
-// import { TVShowDetails } from "./screens/TVShowDetails";
+
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ProductDetails } from "./screens/ProductDeteils";
 import { StackParamList } from "./services/types";
@@ -39,7 +37,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart-outline" size={size} color={color} />
           ),
-          tabBarBadge: favoritesCount > 0 ? favoritesCount : undefined, // буде показувати тільки якщо є улюблені
+          tabBarBadge: favoritesCount > 0 ? favoritesCount : undefined,
         }}
       />
     </Tab.Navigator>
