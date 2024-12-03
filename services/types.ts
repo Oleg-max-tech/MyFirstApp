@@ -5,8 +5,8 @@ export type TabParamList = {
     sort: string;
   };
   Favorites: undefined;
-  MovieDetails: { movieId: number; media_type: string };
-  TVShowDetails: { movieId: number; media_type: string };
+
+  ProductDetails: { id: number; media_type: string };
   Welcome: undefined;
 };
 
@@ -15,4 +15,10 @@ export type RootStackParamList = {
   HomeScreen: undefined;
   FavoriteScreen: undefined;
   MainTabs: undefined;
+};
+
+export type StackParamList = {
+  Welcome: undefined;
+  MainTabs: undefined;
+  ProductDetails: { id: number; media_type: string }; // Ваш тип для параметрів ProductDetails
 };

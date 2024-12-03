@@ -13,10 +13,20 @@ export const tmbdApi = {
     const response = await fetch(url);
     return response.json();
   },
-  getMovieDetails: async (movieId: number, media_type: string) => {
-    const response = await fetch(
-      `https://api.themoviedb.org/3/${media_type}/${movieId}?api_key=${API_KEY}&language=en-US`
-    );
-    return response.json();
+
+  getProductDetails: async (id: number, media_type: string) => {
+    try {
+      const response = await fetch(
+        `https://api.themoviedb.org/3/${media_type}/${id}?api_key=${API_KEY}`
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch product details");
+      }
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      console.error("Error in getProductDetails API call:", err);
+      throw err;
+    }
   },
 };

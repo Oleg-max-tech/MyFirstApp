@@ -5,13 +5,16 @@ import { createStackNavigator } from "@react-navigation/stack";
 import WelcomeScreen from "./screens/WelcomeScreen/WelcomeScreen";
 import { FavoriteScreen } from "./screens/FavoriteScreen";
 import HomeScreenn from "./screens/HomeScrenn";
-import { MovieDetails } from "./screens/MovieDetails";
+// import { MovieDetails } from "./screens/MovieDetails";
 import { TabParamList } from "./services/types";
-import { FavoriteProvider, useFavorite } from "./context/FavoriteContent";
-import { TVShowDetails } from "./screens/TVShowDetails";
-import Ionicons from "react-native-vector-icons/Ionicons";
 
-const Stack = createStackNavigator();
+import { FavoriteProvider, useFavorite } from "./context/FavoriteContent";
+// import { TVShowDetails } from "./screens/TVShowDetails";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { ProductDetails } from "./screens/ProductDeteils";
+import { StackParamList } from "./services/types";
+
+const Stack = createStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 const TabNavigator = () => {
@@ -54,8 +57,7 @@ export default function App() {
             component={TabNavigator}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name="MovieDetails" component={MovieDetails} />
-          <Stack.Screen name="TVShowDetails" component={TVShowDetails} />
+          <Stack.Screen name="ProductDetails" component={ProductDetails} />
         </Stack.Navigator>
       </NavigationContainer>
     </FavoriteProvider>

@@ -19,8 +19,8 @@ type FavoriteItem = {
 type FavoriteContextType = {
   favorites: FavoriteItem[];
   addFavorite: (item: FavoriteItem) => void;
-  removeFavorite: (id: number) => void;
-  toggleFavorite: (item: FavoriteItem) => void; // Додаємо toggleFavorite
+  removeFavorite: (id: number, media_type: string) => void;
+  toggleFavorite: (item: FavoriteItem) => void;
 };
 
 const FavoriteContext = createContext<FavoriteContextType | undefined>(
@@ -59,50 +59,39 @@ export const FavoriteProvider: React.FC<{ children: ReactNode }> = ({
 
   // Оновлення AsyncStorage при зміні списку улюблених
   useEffect(() => {
-    const updateFavorites = async () => {
-      if (favorites.length > 0) {
-        await saveFavorites(favorites);
-      }
-    };
-    updateFavorites();
+    saveFavorites(favorites);
   }, [favorites]);
 
   // Додавання нового улюбленого
   const addFavorite = (item: FavoriteItem) => {
-    setFavorites((prev) => {
-      const updatedFavorites = prev.some((fav) => fav.id === item.id)
+    setFavorites((prev) =>
+      prev.some(
+        (fav) => fav.id === item.id && fav.media_type === item.media_type
+      )
         ? prev
-        : [...prev, item];
-
-      return updatedFavorites;
-    });
+        : [...prev, item]
+    );
   };
 
   // Видалення улюбленого
-  const removeFavorite = (id: number) => {
-    setFavorites((prev) => {
-      const updatedFavorites = prev.filter((item) => item.id !== id);
-      return updatedFavorites;
-    });
+  const removeFavorite = (id: number, media_type: string) => {
+    setFavorites((prev) =>
+      prev.filter((fav) => fav.id !== id || fav.media_type !== media_type)
+    );
   };
 
   // Функція для додавання або видалення елемента з улюблених
   const toggleFavorite = (item: FavoriteItem) => {
     setFavorites((prev) => {
-      // Перевіряємо, чи вже є елемент у списку улюблених
       const isFavorite = prev.some(
         (fav) => fav.id === item.id && fav.media_type === item.media_type
       );
 
-      if (isFavorite) {
-        // Якщо вже є, видаляємо його
-        return prev.filter(
-          (fav) => fav.id !== item.id || fav.media_type !== item.media_type
-        );
-      } else {
-        // Якщо немає, додаємо в список улюблених
-        return [...prev, item];
-      }
+      return isFavorite
+        ? prev.filter(
+            (fav) => fav.id !== item.id || fav.media_type !== item.media_type
+          )
+        : [...prev, item];
     });
   };
 

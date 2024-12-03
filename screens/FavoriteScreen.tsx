@@ -14,7 +14,7 @@ import { TabParamList } from "../services/types";
 import { useFavorite } from "../context/FavoriteContent";
 import { getImageUrl } from "../services/tmbdAPI";
 
-// тип для навігації
+// Тип для навігації
 type FavoriteScreenNavigationProp = StackNavigationProp<
   TabParamList,
   "Favorites"
@@ -30,23 +30,34 @@ export const FavoriteScreen: React.FC = () => {
   }, [favorites]);
 
   // Видалення з улюблених
-  const handleRemoveFavorite = (id: number) => {
-    removeFavorite(id);
+  const handleRemoveFavorite = (id: number, media_type: string) => {
+    removeFavorite(id, media_type);
   };
 
   // Додавання до улюблених
   const handleAddFavorite = (item: any) => {
-    addFavorite(item); // Додаємо до контексту
+    addFavorite(item);
   };
 
-  // Перехід до деталей фільму або серіалу
-  const handleMoviePress = (movieId: number, media_type: string) => {
-    if (media_type === "movie") {
-      navigation.navigate("MovieDetails", { movieId, media_type });
-    } else if (media_type === "tv") {
-      navigation.navigate("TVShowDetails", { movieId, media_type });
+  // Перехід до деталей продукту
+  const handleMoviePress = (id: number, media_type: string) => {
+    if (id && media_type) {
+      console.log(
+        "Navigating to ProductDetails with id:",
+        id,
+        "and media_type:",
+        media_type
+      );
+      navigation.navigate("ProductDetails", {
+        id: id,
+        media_type: media_type,
+      });
     } else {
-      console.error("Invalid media_type:", media_type);
+      console.error(
+        "Invalid parameters passed to ProductDetails:",
+        id,
+        media_type
+      );
     }
   };
 
@@ -65,35 +76,37 @@ export const FavoriteScreen: React.FC = () => {
         <FlatList
           data={localFavorites}
           keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <TouchableOpacity
-              style={styles.favoriteItem}
-              onPress={() =>
-                handleMoviePress(item.id, item.media_type || "movie")
-              }
-            >
-              {item.poster_path && (
-                <Image
-                  source={{
-                    uri: getImageUrl(item.poster_path, "w500"),
-                  }}
-                  style={styles.poster}
-                />
-              )}
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>{item.title || item.name}</Text>
-              </View>
+          renderItem={({ item }) => {
+            const mediaType = item.media_type || "movie"; //
+            const imageUrl = item.poster_path
+              ? getImageUrl(item.poster_path, "w500")
+              : null;
+
+            return (
               <TouchableOpacity
-                style={styles.removeButton}
-                onPress={() => handleRemoveFavorite(item.id)}
+                style={styles.favoriteItem}
+                onPress={() => handleMoviePress(item.id, mediaType)}
               >
-                <Image
-                  source={require("../assets/delete-icon.png")}
+                {imageUrl ? (
+                  <Image source={{ uri: imageUrl }} style={styles.poster} />
+                ) : (
+                  <Text>No image available</Text>
+                )}
+                <View style={styles.textContainer}>
+                  <Text style={styles.title}>{item.title || item.name}</Text>
+                </View>
+                <TouchableOpacity
                   style={styles.removeButton}
-                />
+                  onPress={() => handleRemoveFavorite(item.id, item.media_type)}
+                >
+                  <Image
+                    source={require("../assets/delete-icon.png")}
+                    style={styles.removeButton}
+                  />
+                </TouchableOpacity>
               </TouchableOpacity>
-            </TouchableOpacity>
-          )}
+            );
+          }}
         />
       )}
     </View>

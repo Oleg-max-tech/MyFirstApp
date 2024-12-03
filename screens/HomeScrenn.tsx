@@ -24,10 +24,8 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
   useEffect(() => {
     const fetchItems = async () => {
       setLoading(true);
-
       try {
         let data;
-        // Викликаємо відповідну функцію API в залежності від type і genre
         data = await tmbdApi.getMoviesByTypeAndGenre(type, genre);
 
         if (data.results && data.results.length > 0) {
@@ -43,25 +41,17 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
     fetchItems();
   }, [type, genre]);
 
-  const handleMoviePress = (movieId: number, media_type: string) => {
-    console.log(
-      `Navigating to ${
-        media_type === "movie" ? "MovieDetails" : "TVShowDetails"
-      } with movieId: ${movieId} and media_type: ${media_type}`
-    );
-
-    if (media_type === "movie") {
-      navigation.navigate("MovieDetails", { movieId, media_type });
-    } else if (media_type === "tv") {
-      navigation.navigate("TVShowDetails", { movieId, media_type });
-    } else {
-      console.error("Invalid media_type:", media_type);
-    }
-  };
-
-  //Повернення на welcomeScreen
+  // Повернення на welcomeScreen
   const handleBackToWelcome = () => {
     navigation.navigate("Welcome");
+  };
+
+  // Навігація на екран деталі продукту
+  const handleMoviePress = (id: number, media_type: string) => {
+    navigation.navigate("ProductDetails", {
+      id,
+      media_type,
+    });
   };
 
   if (loading) {
@@ -116,7 +106,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
