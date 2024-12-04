@@ -1,8 +1,10 @@
+import { SortOptions } from "../types";
+
 export type TabParamList = {
   Home: {
     type: string;
     genre: string;
-    sort: string;
+    sort: SortOptions;
   };
   Favorites: undefined;
 
@@ -20,5 +22,5 @@ export type RootStackParamList = {
 export type StackParamList = {
   Welcome: undefined;
   MainTabs: undefined;
-  ProductDetails: { id: number; media_type: string }; // Ваш тип для параметрів ProductDetails
+  ProductDetails: { id: number; media_type: string };
 };

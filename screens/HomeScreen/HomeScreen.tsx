@@ -9,37 +9,22 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
-import { TabParamList } from "../services/types";
-import { tmbdApi } from "../services/tmbdAPI";
-import { sortItems, SortOptions } from "./WelcomeScreen/SortingOptions";
-import { getImageUrl } from "../services/tmbdAPI";
+import { TabParamList } from "../../navigation/types";
+import { tmbdApi } from "../../services/tmbdAPI";
+import { sortItems } from "../WelcomeScreen/SortingOptions";
+import { getImageUrl } from "../../services/tmbdAPI";
+import { useMovies } from "./hooks/useMovies";
+import { SortOptions } from "../../types";
 
 type HomeScreenProps = BottomTabScreenProps<TabParamList, "Home">;
 
 const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
   const { type, genre, sort } = route.params;
-  const [items, setItems] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchItems = async () => {
-      setLoading(true);
-      try {
-        let data;
-        data = await tmbdApi.getMoviesByTypeAndGenre(type, genre);
-
-        if (data.results && data.results.length > 0) {
-          setItems(data.results);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchItems();
-  }, [type, genre]);
+  const { items, loading } = useMovies({
+    type,
+    genre,
+  });
 
   // Повернення на welcomeScreen
   const handleBackToWelcome = () => {
@@ -71,7 +56,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
   }
 
   // Сортуємо фільмів до опцій
-  const sortedItems = sortItems(items, sort as SortOptions, type);
+  const sortedItems = sortItems(items, sort, type);
 
   return (
     <View style={styles.container}>

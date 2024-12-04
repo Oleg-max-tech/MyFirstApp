@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import { TabParamList } from "../services/types";
+import { TabParamList } from "../navigation/types";
 
 import { useFavorite } from "../context/FavoriteContent";
 import { getImageUrl } from "../services/tmbdAPI";

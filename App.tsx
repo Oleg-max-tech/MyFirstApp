@@ -4,13 +4,13 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import WelcomeScreen from "./screens/WelcomeScreen/WelcomeScreen";
 import { FavoriteScreen } from "./screens/FavoriteScreen";
-import HomeScreenn from "./screens/HomeScrenn";
-import { TabParamList } from "./services/types";
+import HomeScreenn from "./screens/HomeScreen/HomeScreen";
+import { TabParamList } from "./navigation/types";
 import { FavoriteProvider, useFavorite } from "./context/FavoriteContent";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ProductDetails } from "./screens/ProductDeteils";
-import { StackParamList } from "./services/types";
+import { StackParamList } from "./navigation/types";
 
 const Stack = createStackNavigator<StackParamList>();
 const Tab = createBottomTabNavigator<TabParamList>();

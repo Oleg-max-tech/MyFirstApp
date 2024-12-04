@@ -7,13 +7,36 @@ export type SortOptions =
   | "alphabetical"
   | "popularity";
 
+const sortOptions: SortOptions[] = [
+  "release_date",
+  "rating",
+  "alphabetical",
+  "popularity",
+];
+
+const sortLabels: Record<SortOptions, string> = {
+  release_date: "Release Date",
+  rating: "Rating",
+  alphabetical: "Alphabetical",
+  popularity: "Popularity",
+};
+
 type SortingOptionsProps = {
   onSortChange: (sortOption: SortOptions) => void;
 };
 
-// сортування
+// Функція сортування
 export const sortItems = (
-  data: any[],
+  data: {
+    id: number;
+    release_date?: string;
+    first_air_date?: string;
+    vote_average?: number;
+    popularity?: number;
+    title?: string;
+    name?: string;
+    poster_path: string;
+  }[],
   sortOption: SortOptions,
   type: string
 ) => {
@@ -24,18 +47,22 @@ export const sortItems = (
       sortedItems = sortedItems.sort((a, b) => {
         const dateA = type === "movie" ? a.release_date : a.first_air_date;
         const dateB = type === "movie" ? b.release_date : b.first_air_date;
-        return dateA > dateB ? 1 : -1;
+        return dateA && dateB ? (dateA > dateB ? 1 : -1) : 0;
       });
       break;
     case "rating":
-      sortedItems = sortedItems.sort((a, b) => b.vote_average - a.vote_average);
+      sortedItems = sortedItems.sort(
+        (a, b) => (b.vote_average || 0) - (a.vote_average || 0)
+      );
       break;
     case "popularity":
-      sortedItems = sortedItems.sort((a, b) => b.popularity - a.popularity);
+      sortedItems = sortedItems.sort(
+        (a, b) => (b.popularity || 0) - (a.popularity || 0)
+      );
       break;
     case "alphabetical":
       sortedItems = sortedItems.sort((a, b) =>
-        (a.title || a.name).localeCompare(b.title || b.name)
+        (a.title || a.name || "").localeCompare(b.title || b.name || "")
       );
       break;
     default:
@@ -48,7 +75,7 @@ export const sortItems = (
 const SortingOptions: React.FC<SortingOptionsProps> = ({ onSortChange }) => {
   const [selectedSort, setSelectedSort] = useState<SortOptions>("popularity");
 
-  // зміна сортування
+  // Зміна сортування
   const handleSortChange = (option: SortOptions) => {
     setSelectedSort(option);
     onSortChange(option);
@@ -58,38 +85,29 @@ const SortingOptions: React.FC<SortingOptionsProps> = ({ onSortChange }) => {
     <View style={styles.sortContainer}>
       <Text style={styles.sortLabel}>Sort By:</Text>
       <View style={styles.sortButtons}>
-        {["release_date", "rating", "alphabetical", "popularity"].map(
-          (option) => (
-            <TouchableOpacity
-              key={option}
+        {sortOptions.map((option) => (
+          <TouchableOpacity
+            key={option}
+            style={[
+              styles.sortButton,
+              selectedSort === option && styles.selectedSortButton,
+            ]}
+            onPress={() => handleSortChange(option)}
+          >
+            <Text
               style={[
-                styles.sortButton,
-                selectedSort === option && styles.selectedSortButton,
+                styles.sortButtonText,
+                selectedSort === option && styles.selectedSortButtonText,
               ]}
-              onPress={() => handleSortChange(option as SortOptions)}
             >
-              <Text
-                style={[
-                  styles.sortButtonText,
-                  selectedSort === option && styles.selectedSortButtonText,
-                ]}
-              >
-                {capitalize(option)}
-              </Text>
-            </TouchableOpacity>
-          )
-        )}
+              {sortLabels[option]}
+            </Text>
+          </TouchableOpacity>
+        ))}
       </View>
     </View>
   );
 };
-
-//  функція для форматування тексту
-const capitalize = (text: string) =>
-  text
-    .split("_")
-    .map((word) => word[0].toUpperCase() + word.slice(1))
-    .join(" ");
 
 const styles = StyleSheet.create({
   sortContainer: {

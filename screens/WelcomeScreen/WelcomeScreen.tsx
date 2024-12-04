@@ -5,6 +5,14 @@ import { StackNavigationProp } from "@react-navigation/stack";
 // import SortingOptions, { SortOptions } from "./SortingOptions";
 import SortingOptions, { SortOptions } from "./SortingOptions";
 
+const genres = [
+  { id: "28", name: "Action" },
+  { id: "35", name: "Comedy" },
+  { id: "18", name: "Drama" },
+  { id: "27", name: "Horror" },
+  { id: "878", name: "Sci-Fi" },
+];
+
 type WelcomeScreenProps = {
   navigation: StackNavigationProp<any, any>;
 };
@@ -14,15 +22,7 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [selectedSort, setSelectedSort] = useState<SortOptions>("popularity");
 
-  const genres = [
-    { id: "28", name: "Action" },
-    { id: "35", name: "Comedy" },
-    { id: "18", name: "Drama" },
-    { id: "27", name: "Horror" },
-    { id: "878", name: "Sci-Fi" },
-  ];
-
-  //
+  //hadleStartPress перейменувати
   const handleStart = () => {
     navigation.navigate("MainTabs", {
       screen: "Home",

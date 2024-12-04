@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   View,
   Text,
@@ -13,7 +13,7 @@ import { useFavorite } from "../context/FavoriteContent";
 import { tmbdApi } from "../services/tmbdAPI";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { RouteProp } from "@react-navigation/native";
-import { StackParamList } from "../services/types";
+import { StackParamList } from "../navigation/types";
 
 type ProductDetailsProps = {
   route: RouteProp<StackParamList, "ProductDetails">;
@@ -27,7 +27,14 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ route }) => {
   const [error, setError] = useState<string | null>(null);
 
   const { favorites, toggleFavorite } = useFavorite();
-  const [isLiked, setIsLiked] = useState<boolean>(false);
+  // const [isLiked, setIsLiked] = useState<boolean>(false);
+
+  const isLiked = useMemo(() => {
+    const likeProduct = favorites.find(
+      (item: any) => item.id === id && item.media_type === media_type
+    );
+    return Boolean(likeProduct);
+  }, [favorites, id, media_type]);
 
   const loadProductDetails = async () => {
     console.log("Loading product details...");
@@ -39,7 +46,6 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ route }) => {
     if (productData) {
       console.log("Found product in favorites:", productData);
       setProduct(productData);
-      setIsLiked(true);
     } else {
       try {
         console.log(`Fetching ${media_type} details...`);
@@ -86,7 +92,7 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ route }) => {
       }
 
       toggleFavorite(product);
-      setIsLiked(!isLiked);
+
       Alert.alert(isLiked ? "Removed from Favorites" : "Added to Favorites");
     } catch (error) {
       console.error("Error handling like:", error);
