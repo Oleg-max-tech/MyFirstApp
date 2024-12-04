@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { tmbdApi } from "../../../services/tmbdAPI";
-import { Movie } from "../../../types";
 
 type Props = {
   type: string;
