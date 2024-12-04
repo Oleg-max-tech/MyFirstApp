@@ -42,12 +42,6 @@ export const FavoriteScreen: React.FC = () => {
   // Перехід до деталей продукту
   const handleMoviePress = (id: number, media_type: string) => {
     if (id && media_type) {
-      console.log(
-        "Navigating to ProductDetails with id:",
-        id,
-        "and media_type:",
-        media_type
-      );
       navigation.navigate("ProductDetails", {
         id: id,
         media_type: media_type,

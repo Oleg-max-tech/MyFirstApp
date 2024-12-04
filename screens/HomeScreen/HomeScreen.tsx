@@ -10,11 +10,10 @@ import {
 } from "react-native";
 import { BottomTabScreenProps } from "@react-navigation/bottom-tabs";
 import { TabParamList } from "../../navigation/types";
-import { tmbdApi } from "../../services/tmbdAPI";
+
 import { sortItems } from "../WelcomeScreen/SortingOptions";
 import { getImageUrl } from "../../services/tmbdAPI";
 import { useMovies } from "./hooks/useMovies";
-import { SortOptions } from "../../types";
 
 type HomeScreenProps = BottomTabScreenProps<TabParamList, "Home">;
 

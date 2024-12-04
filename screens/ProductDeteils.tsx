@@ -36,22 +36,16 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ route }) => {
   }, [favorites, id, media_type]);
 
   const loadProductDetails = async () => {
-    console.log("Loading product details...");
-
     const productData = favorites.find(
       (item: any) => item.id === id && item.media_type === media_type
     );
 
     if (productData) {
-      console.log("Found product in favorites:", productData);
       setProduct(productData);
     } else {
       try {
-        console.log(`Fetching ${media_type} details...`);
-
         const response = await tmbdApi.getProductDetails(id, media_type);
 
-        console.log(`${media_type} data from API:`, response);
         setProduct(response);
       } catch (err) {
         console.error("Error fetching product details:", err);
