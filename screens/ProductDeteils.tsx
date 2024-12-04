@@ -27,7 +27,6 @@ export const ProductDetails: React.FC<ProductDetailsProps> = ({ route }) => {
   const [error, setError] = useState<string | null>(null);
 
   const { favorites, toggleFavorite } = useFavorite();
-  // const [isLiked, setIsLiked] = useState<boolean>(false);
 
   const isLiked = useMemo(() => {
     const likeProduct = favorites.find(

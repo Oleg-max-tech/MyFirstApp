@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { Picker } from "@react-native-picker/picker";
 import { StackNavigationProp } from "@react-navigation/stack";
-// import SortingOptions, { SortOptions } from "./SortingOptions";
 import SortingOptions, { SortOptions } from "./SortingOptions";
 
 const genres = [
@@ -22,7 +21,6 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
   const [selectedSort, setSelectedSort] = useState<SortOptions>("popularity");
 
-  //hadleStartPress перейменувати
   const handleStart = () => {
     navigation.navigate("MainTabs", {
       screen: "Home",
@@ -51,7 +49,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
           ]}
           onPress={() => setSelectedType("movie")}
         >
-          <Text style={styles.buttonText}>Movies</Text>
+          <Text
+            style={[
+              styles.buttonText,
+              selectedType === "movie" && styles.selectedButtonText,
+            ]}
+          >
+            Movies
+          </Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[
@@ -60,7 +65,14 @@ const WelcomeScreen: React.FC<WelcomeScreenProps> = ({ navigation }) => {
           ]}
           onPress={() => setSelectedType("tv")}
         >
-          <Text style={styles.buttonText}>TV Shows</Text>
+          <Text
+            style={[
+              styles.buttonText,
+              selectedType === "tv" && styles.selectedButtonText,
+            ]}
+          >
+            TV Shows
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -115,13 +127,16 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     marginHorizontal: 10,
+    backgroundColor: "#f0f0f0", 
   },
   selectedButton: {
-    backgroundColor: "#007BFF",
-    borderColor: "#0056b3",
+    backgroundColor: "#007BFF", 
   },
   buttonText: {
-    color: "#fff",
+    color: "#333",
+  },
+  selectedButtonText: {
+    color: "#fff", 
   },
   pickerContainer: {
     width: "100%",
