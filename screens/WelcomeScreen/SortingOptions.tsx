@@ -27,16 +27,7 @@ type SortingOptionsProps = {
 
 // Функція сортування
 export const sortItems = (
-  data: {
-    id: number;
-    release_date?: string;
-    first_air_date?: string;
-    vote_average?: number;
-    popularity?: number;
-    title?: string;
-    name?: string;
-    poster_path: string;
-  }[],
+  data: any[],
   sortOption: SortOptions,
   type: string
 ) => {

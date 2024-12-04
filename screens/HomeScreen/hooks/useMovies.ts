@@ -7,7 +7,7 @@ type Props = {
 };
 
 const useMovies = ({ genre, type }: Props) => {
-  const [items, setItems] = useState<any[]>([]); // Тут ми вказуємо точний тип
+  const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchItems = async () => {
@@ -18,7 +18,7 @@ const useMovies = ({ genre, type }: Props) => {
       data = await tmbdApi.getMoviesByTypeAndGenre(type, genre);
 
       if (data.results && data.results.length > 0) {
-        setItems(data.results); // Тип уже вказано для результатів
+        setItems(data.results);
       }
     } catch (error) {
       console.error("Error fetching data:", error);
