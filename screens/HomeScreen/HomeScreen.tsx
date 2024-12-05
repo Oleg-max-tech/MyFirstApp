@@ -46,9 +46,16 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
     );
   }
 
+  // добавив кнопку повернення назад коли нічого не знайдено
   if (items.length === 0) {
     return (
       <View style={styles.emptyContainer}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => navigation.navigate("Welcome")}
+        >
+          <Text style={styles.backButtonText}> Go Back</Text>
+        </TouchableOpacity>
         <Text>No movies found.</Text>
       </View>
     );

@@ -127,16 +127,16 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 5,
     marginHorizontal: 10,
-    backgroundColor: "#f0f0f0", 
+    backgroundColor: "#f0f0f0",
   },
   selectedButton: {
-    backgroundColor: "#007BFF", 
+    backgroundColor: "#007BFF",
   },
   buttonText: {
     color: "#333",
   },
   selectedButtonText: {
-    color: "#fff", 
+    color: "#fff",
   },
   pickerContainer: {
     width: "100%",

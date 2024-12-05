@@ -25,6 +25,11 @@ type SortingOptionsProps = {
   onSortChange: (sortOption: SortOptions) => void;
 };
 
+// пропускає символи а зразу йде до літер
+const cleanString = (str: string): string => {
+  return str.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+};
+
 // Функція сортування
 export const sortItems = (
   data: any[],
@@ -52,10 +57,13 @@ export const sortItems = (
       );
       break;
     case "alphabetical":
-      sortedItems = sortedItems.sort((a, b) =>
-        (a.title || a.name || "").localeCompare(b.title || b.name || "")
-      );
+      sortedItems = sortedItems.sort((a, b) => {
+        const nameA = cleanString(a.title || a.name || "");
+        const nameB = cleanString(b.title || b.name || "");
+        return nameA.localeCompare(nameB);
+      });
       break;
+
     default:
       break;
   }
