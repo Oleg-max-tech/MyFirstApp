@@ -8,8 +8,8 @@ export const getImageUrl = (path: string, size: string = "w500") => {
 export const tmbdApi = {
   getMoviesByTypeAndGenre: async (type: string, genre: string | null) => {
     const url = genre
-      ? `https://api.themoviedb.org/3/discover/${type}?with_genres=${genre}&api_key${API_KEY}`
-      : `https://api.themoviedb.org/3/trending/${type}/week?api_key=${API_KEY}`;
+      ? `${BASE_URL}/discover/${type}?with_genres=${genre}&api_key${API_KEY}`
+      : `${BASE_URL}/trending/${type}/week?api_key=${API_KEY}`;
     const response = await fetch(url);
     return response.json();
   },

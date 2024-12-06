@@ -57,18 +57,12 @@ export const FavoriteScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.backButton}
-        onPress={() => navigation.navigate("Welcome")}
-      >
-        <Text style={styles.backButtonText}>Back to Main Menu</Text>
-      </TouchableOpacity>
-
       {localFavorites.length === 0 ? (
         <Text style={styles.emptyText}>No favorites yet</Text>
       ) : (
         <FlatList
           data={localFavorites}
+          style={styles.flatlistContainer}
           keyExtractor={(item) => item.id.toString()}
           renderItem={({ item }) => {
             const mediaType = item.media_type || "movie"; //
@@ -101,6 +95,14 @@ export const FavoriteScreen: React.FC = () => {
               </TouchableOpacity>
             );
           }}
+          ListHeaderComponent={
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={() => navigation.navigate("Welcome")}
+            >
+              <Text style={styles.backButtonText}>Back to Main Menu</Text>
+            </TouchableOpacity>
+          }
         />
       )}
     </View>
@@ -111,7 +113,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 10,
+  },
+  flatlistContainer: {
+    paddingBottom: 20,
+    paddingHorizontal: 16,
   },
   emptyText: {
     fontSize: 18,
@@ -127,6 +132,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 10,
     flex: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   poster: {
     width: 100,
@@ -153,6 +163,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   backButton: {
+    marginTop: 16,
     padding: 10,
     backgroundColor: "#007BFF",
     borderRadius: 5,

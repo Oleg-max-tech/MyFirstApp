@@ -14,8 +14,7 @@ const useMovies = ({ genre, type }: Props) => {
     setLoading(true);
 
     try {
-      let data;
-      data = await tmbdApi.getMoviesByTypeAndGenre(type, genre);
+      const data = await tmbdApi.getMoviesByTypeAndGenre(type, genre);
 
       if (data.results && data.results.length > 0) {
         setItems(data.results);

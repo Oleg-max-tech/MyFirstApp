@@ -66,10 +66,6 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={handleBackToWelcome}>
-        <Text style={styles.backButtonText}>Back to Main menu</Text>
-      </TouchableOpacity>
-
       <FlatList
         data={sortedItems}
         renderItem={({ item }) => (
@@ -93,6 +89,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
         )}
         keyExtractor={(item) => item.id.toString()}
         contentContainerStyle={styles.flatListContent}
+        ListHeaderComponent={
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={handleBackToWelcome}
+          >
+            <Text style={styles.backButtonText}>Back to Main menu</Text>
+          </TouchableOpacity>
+        }
       />
     </View>
   );
@@ -100,7 +104,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ route, navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
+    // padding: 10,
     backgroundColor: "#f5f5f5",
   },
   loadingContainer: {
@@ -117,6 +121,7 @@ const styles = StyleSheet.create({
   },
   flatListContent: {
     paddingBottom: 20,
+    paddingHorizontal: 16,
   },
   movieContainer: {
     flexDirection: "row",
@@ -150,6 +155,7 @@ const styles = StyleSheet.create({
     color: "#666",
   },
   backButton: {
+    marginTop: 16,
     padding: 10,
     backgroundColor: "#007BFF",
     borderRadius: 5,

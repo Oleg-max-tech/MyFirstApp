@@ -7,6 +7,7 @@ import { FavoriteScreen } from "./screens/FavoriteScreen";
 import HomeScreenn from "./screens/HomeScreen/HomeScreen";
 import { TabParamList } from "./navigation/types";
 import { FavoriteProvider, useFavorite } from "./context/FavoriteContent";
+import { Text } from "react-native";
 
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { ProductDetails } from "./screens/ProductDeteils";
@@ -28,6 +29,7 @@ const TabNavigator = () => {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
+          // headerLeft: () => <Text>123</Text>,
         }}
       />
       <Tab.Screen
